@@ -11,8 +11,11 @@ echo
 echo "You should use this setup on a fresh installation of Ubuntu"
 echo
 read -p "Press Enter to continue or Ctrl+C to abort"
+echo
 
-echo "test"
+echo -n "Please enter password for local MySQL root [Enter]: "
+read pass_mysql
 
+mysql -u root --password=$pass_mysql
 
 exit 0
