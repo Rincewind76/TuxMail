@@ -6,7 +6,7 @@ echo "** Install Mail server on Ubuntu with Dovecot, postfix, SpamAssassin and M
 echo "************************************************************************************"
 echo "************************************************************************************"
 echo "This installation is following the tutorial of Thomas Leister found here:"
-<echo "https://thomas-leister.de/mailserver-unter-ubuntu-16.04/"
+echo "https://thomas-leister.de/mailserver-unter-ubuntu-16.04/"
 echo
 echo "You should use this setup on a fresh installation of Ubuntu"
 echo
@@ -15,8 +15,8 @@ read -p "Press Enter to continue or Ctrl+C to abort"
 echo
 echo "************************************************************************************"
 echo "** Switching to root Context, you might need to enter your user password."
+echo
 sudo -s
-xecho
 
 echo "************************************************************************************"
 echo "** Bringing the environment up to date."
@@ -26,7 +26,7 @@ apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
 
-yecho "************************************************************************************"
+echo "************************************************************************************"
 echo "** Setting the hostname and hosts file."
 echo
 echo "tuxmail" > /etc/hostname
@@ -37,6 +37,7 @@ echo "**************************************************************************
 echo "** Setting up a DH parameter file."
 echo
 <mkdir /etc/myssl
+(crontab -l 2>/dev/null; echo "@daily FILE=`mktemp` ; openssl dhparam 2048 -out $FILE && mv -f $FILE /etc/myssl/dh2048.pem") | crontab -
 FILE=`mktemp` ; openssl dhparam 2048 -out $FILE && mv -f $FILE /etc/myssl/dh2048.pem
 
 echo "************************************************************************************"
@@ -46,7 +47,7 @@ apt -y install git
 git clone https://github.com/certbot/certbot
 mv certbot ~/
 
-yecho "************************************************************************************"
+echo "************************************************************************************"
 echo "** Install local instance of MySQL and setup virtual mail user."
 echo "** You might need to enter the MySQL root password twice. Make sure it's the same."
 echo
@@ -56,7 +57,7 @@ apt-get -y install mysql-server
 cat ./sql/create_vmail.sql | mysql -u root --password=$pass_mysql
 mkdir /var/vmail
 adduser --disabled-login --disabled-password --home /var/vmail vmail
-xmkdir /var/vmail/mailboxes
+mkdir /var/vmail/mailboxes
 mkdir -p /var/vmail/sieve/global
 chown -R vmail /var/vmail
 chgrp -R vmail /var/vmail
@@ -66,7 +67,7 @@ echo "**************************************************************************
 echo "** Install Dovecot."
 echo
 apt-get -y install dovecot-core dovecot-imapd dovecot-lmtpd dovecot-mysql dovecot-sieve dovecot-managesieved dovecot-antispam
-<systemctl stop dovecot
+systemctl stop dovecot
 rm -r /etc/dovecot/*
 cp ./conf/dovecot.conf /etc/dovecot/
 cp ./conf/dovecot-sql.conf /etc/dovecot/
@@ -76,12 +77,11 @@ chown vmail:vmail /var/vmail/spampipe.sh
 chmod u+x /var/vmail/spampipe.sh
 cp ./conf/spam-global.sieve /var/vmail/sieve/global/
 
-y
+
 echo "************************************************************************************"
 echo "** Install Postfix. Please select <No configuration> during installation."
 echo
 read -p "Press Enter to continue"
-
 echo
 apt-get -y install postfix postfix-mysql
 systemctl stop postfix
