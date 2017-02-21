@@ -6,7 +6,7 @@ echo "** Install Mail server on Ubuntu with Dovecot, postfix, SpamAssassin and M
 echo "************************************************************************************"
 echo "************************************************************************************"
 echo "This installation is following the tutorial of Thomas Leister found here:"
-echo "https://thomas-leister.de/mailserver-unter-ubuntu-16.04/"
+<echo "https://thomas-leister.de/mailserver-unter-ubuntu-16.04/"
 echo
 echo "You should use this setup on a fresh installation of Ubuntu"
 echo
@@ -16,7 +16,7 @@ echo
 echo "************************************************************************************"
 echo "** Switching to root Context, you might need to enter your user password."
 sudo -s
-echo
+xecho
 
 echo "************************************************************************************"
 echo "** Bringing the environment up to date."
@@ -26,7 +26,7 @@ apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
 
-echo "************************************************************************************"
+yecho "************************************************************************************"
 echo "** Setting the hostname and hosts file."
 echo
 echo "tuxmail" > /etc/hostname
@@ -36,7 +36,7 @@ echo $(hostname -f) > /etc/mailname
 echo "************************************************************************************"
 echo "** Setting up a DH parameter file."
 echo
-mkdir /etc/myssl
+<mkdir /etc/myssl
 FILE=`mktemp` ; openssl dhparam 2048 -out $FILE && mv -f $FILE /etc/myssl/dh2048.pem
 
 echo "************************************************************************************"
@@ -46,17 +46,17 @@ apt -y install git
 git clone https://github.com/certbot/certbot
 mv certbot ~/
 
-echo "************************************************************************************"
+yecho "************************************************************************************"
 echo "** Install local instance of MySQL and setup virtual mail user."
 echo "** You might need to enter the MySQL root password twice. Make sure it's the same."
 echo
 echo -n "Please enter password for local MySQL root [Enter]: "
 read pass_mysql
 apt-get -y install mysql-server
-cat ./sql/creat_vmail.sql | mysql -u root --password=$pass_mysql
+cat ./sql/create_vmail.sql | mysql -u root --password=$pass_mysql
 mkdir /var/vmail
 adduser --disabled-login --disabled-password --home /var/vmail vmail
-mkdir /var/vmail/mailboxes
+xmkdir /var/vmail/mailboxes
 mkdir -p /var/vmail/sieve/global
 chown -R vmail /var/vmail
 chgrp -R vmail /var/vmail
@@ -66,7 +66,7 @@ echo "**************************************************************************
 echo "** Install Dovecot."
 echo
 apt-get -y install dovecot-core dovecot-imapd dovecot-lmtpd dovecot-mysql dovecot-sieve dovecot-managesieved dovecot-antispam
-systemctl stop dovecot
+<systemctl stop dovecot
 rm -r /etc/dovecot/*
 cp ./conf/dovecot.conf /etc/dovecot/
 cp ./conf/dovecot-sql.conf /etc/dovecot/
@@ -76,10 +76,12 @@ chown vmail:vmail /var/vmail/spampipe.sh
 chmod u+x /var/vmail/spampipe.sh
 cp ./conf/spam-global.sieve /var/vmail/sieve/global/
 
+y
 echo "************************************************************************************"
 echo "** Install Postfix. Please select <No configuration> during installation."
 echo
 read -p "Press Enter to continue"
+
 echo
 apt-get -y install postfix postfix-mysql
 systemctl stop postfix
@@ -113,6 +115,61 @@ mkdir /etc/opendkim
 mkdir /etc/opendkim/keys
 opendkim-genkey --selector=key1 --bits=2048 --directory=/etc/opendkim/keys
 cp /etc/opendkim/keys/key1.txt .
+chown opendkim /etc/opendkim/keys/key1.private
+usermod -aG opendkim postfix
 
+echo "************************************************************************************"
+echo "** Install Amavis."
+echo
+apt-get -y install amavisd-new libdbi-perl libdbd-mysql-perl
+systemctl stop amavisd-new
+cp ./conf/50-user /etc/amavis/conf.d/
+chmod 770 /etc/amavis/conf.d/50-user
+wget 'https://github.com/ThomasLeister/amavisd-milter/archive/master.zip' -O amavisd-milter.zip
+apt-get -y install gcc libmilter-dev make unzip
+unzip amavisd-milter.zip
+cd amavisd-milter-master
+./configure
+make
+make install
+make clean
+cd ..
+rm -r amavisd-milter-master
+rm amavisd-milter.zip
+cp ./conf/amavisd-milter.service /etc/systemd/system/
+systemctl enable amavisd-milter
+
+echo "************************************************************************************"
+echo "** Install Spamassassin ."
+echo
+apt-get -y install spamassassin acl
+cat ./sql/create_spamassassin.sql | mysql -u root --password=$pass_mysql
+cat /usr/share/doc/spamassassin/sql/bayes_mysql.sql | mysql -u root --password=$pass_mysql spamassassin
+cp ./conf/local.cf /etc/mail/spamassassin/
+setfacl -m o:--- /etc/mail/spamassassin/local.cf
+setfacl -m u:vmail:r /etc/mail/spamassassin/local.cf
+setfacl -m u:amavis:r /etc/mail/spamassassin/local.cf
+cp ./conf/sa-care.sh /root/
+(crontab -l 2>/dev/null; echo "@daily /root/sa-care.sh") | crontab -
+/root/sa-care.sh
+
+echo "************************************************************************************"
+echo "** Install Razor and Pyzor."
+echo
+apt-get -y install razor pyzor
+sudo -i -u amavis
+razor-admin -create
+razor-admin -register
+pyzor discover
+exit
+
+echo "************************************************************************************"
+echo "** Start everything..."
+echo
+systemctl start dovecot
+systemctl start amavisd-new
+systemctl start amavisd-milter
+systemctl start opendkim
+systemctl start postfix
 
 exit 0
