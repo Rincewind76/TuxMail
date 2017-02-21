@@ -11,6 +11,7 @@ echo
 echo "You should use this setup on a fresh installation of Ubuntu"
 echo
 read -p "Press Enter to continue or Ctrl+C to abort"
+echo
 
 echo "test"
 
