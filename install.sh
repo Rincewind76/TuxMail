@@ -36,7 +36,7 @@ echo $(hostname -f) > /etc/mailname
 echo "************************************************************************************"
 echo "** Setting up a DH parameter file."
 echo
-<mkdir /etc/myssl
+mkdir /etc/myssl
 (crontab -l 2>/dev/null; echo "@daily FILE=`mktemp` ; openssl dhparam 2048 -out $FILE && mv -f $FILE /etc/myssl/dh2048.pem") | crontab -
 FILE=`mktemp` ; openssl dhparam 2048 -out $FILE && mv -f $FILE /etc/myssl/dh2048.pem
 
