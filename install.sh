@@ -12,12 +12,6 @@ echo "You should use this setup on a fresh installation of Ubuntu"
 echo
 read -p "Press Enter to continue or Ctrl+C to abort"
 
-echo
-echo "************************************************************************************"
-echo "** Switching to root Context, you might need to enter your user password."
-echo
-sudo -s
-
 echo "************************************************************************************"
 echo "** Bringing the environment up to date."
 echo
