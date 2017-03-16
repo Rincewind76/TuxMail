@@ -151,11 +151,9 @@ echo "**************************************************************************
 echo "** Install Razor and Pyzor."
 echo
 apt-get -y install razor pyzor
-sudo -i -u amavis
-razor-admin -create
-razor-admin -register
-pyzor discover
-exit
+sudo -i -u amavis -c razor-admin -create
+sudo -i -u amavis -c razor-admin -register
+sudo -i -u amavis -c pyzor discover
 
 echo "************************************************************************************"
 echo "** Start everything..."
