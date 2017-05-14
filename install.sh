@@ -77,7 +77,7 @@ echo "** Install Postfix. Please select <No configuration> during installation."
 echo
 read -p "Press Enter to continue"
 echo
-apt-get -y install postfix postfix-mysql
+apt-get -y install postfix postfix-mysql libsasl2-modules
 systemctl stop postfix
 rm -r /etc/postfix/sasl
 rm /etc/postfix/master.cf
