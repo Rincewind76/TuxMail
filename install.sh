@@ -92,6 +92,9 @@ cp ./conf/domains.cf /etc/postfix/sql/
 cp ./conf/recipient-access.cf /etc/postfix/sql/
 cp ./conf/sender-login-maps.cf /etc/postfix/sql/
 cp ./conf/tls-policy.cf /etc/postfix/sql/
+cp ./conf/ad_sender_login_maps.cf /etc/postfix/
+cp ./conf/ad_virtual_mailbox_maps.cf /etc/postfix/
+cp ./conf/ad_virtual_group_maps.cf /etc/postfix/
 chmod -R 660 /etc/postfix/sql
 touch /etc/postfix/without_ptr
 touch /etc/postfix/postscreen_access
