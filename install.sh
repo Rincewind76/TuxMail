@@ -65,6 +65,7 @@ systemctl stop dovecot
 rm -r /etc/dovecot/*
 cp ./conf/dovecot.conf /etc/dovecot/
 cp ./conf/dovecot-sql.conf /etc/dovecot/
+cp ./conf/dovecot-ldap.conf /etc/dovecot/
 chmod 770 /etc/dovecot/dovecot-sql.conf
 cp ./conf/spampipe.sh /var/vmail/
 chown vmail:vmail /var/vmail/spampipe.sh
