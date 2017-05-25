@@ -60,7 +60,7 @@ chmod -R 770 /var/vmail
 echo "************************************************************************************"
 echo "** Install Dovecot."
 echo
-apt-get -y install dovecot-core dovecot-imapd dovecot-lmtpd dovecot-mysql dovecot-sieve dovecot-managesieved dovecot-antispam dovecot-ldap
+apt-get -y install dovecot-core dovecot-imapd dovecot-lmtpd dovecot-mysql dovecot-sieve dovecot-managesieved dovecot-antispam dovecot-ldap ldap-utils
 systemctl stop dovecot
 rm -r /etc/dovecot/*
 cp ./conf/dovecot.conf /etc/dovecot/
