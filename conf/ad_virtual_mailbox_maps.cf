@@ -5,7 +5,7 @@ bind            = yes
 start_tls       = no
 bind_dn         = aduser
 bind_pw         = passwd_of_vmail
-search_base     = cn=users,dc=example,dc=com
+search_base     = cn=users,dc=schoedl,dc=me
 scope           = sub
 query_filter    = (&(objectclass=person)(userPrincipalName=%s))
 result_attribute= userPrincipalName
