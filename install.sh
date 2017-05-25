@@ -60,7 +60,7 @@ chmod -R 770 /var/vmail
 echo "************************************************************************************"
 echo "** Install Dovecot."
 echo
-apt-get -y install dovecot-core dovecot-imapd dovecot-lmtpd dovecot-mysql dovecot-sieve dovecot-managesieved dovecot-antispam
+apt-get -y install dovecot-core dovecot-imapd dovecot-lmtpd dovecot-mysql dovecot-sieve dovecot-managesieved dovecot-antispam dovecot-ldap
 systemctl stop dovecot
 rm -r /etc/dovecot/*
 cp ./conf/dovecot.conf /etc/dovecot/
@@ -77,7 +77,7 @@ echo "** Install Postfix. Please select <No configuration> during installation."
 echo
 read -p "Press Enter to continue"
 echo
-apt-get -y install postfix postfix-mysql libsasl2-modules
+apt-get -y install postfix postfix-mysql libsasl2-modules postfix-ldap
 systemctl stop postfix
 rm -r /etc/postfix/sasl
 rm /etc/postfix/master.cf
